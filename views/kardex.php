@@ -135,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($estado_curso === 'Activo') {
       $sql = "SELECT * 
-          FROM vista_kardex 
+          FROM vista_ventas_completa
           WHERE estado = 'Activo'
           AND user_id = '" . $_SESSION['user_id'] . "'"; //cursos del usuario 
       $result = $conn->query($sql);
@@ -149,7 +149,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($estado_curso === 'Finalizado') {
       $sql = "SELECT *
-              FROM vista_kardex 
+              FROM vista_ventas_completa 
               WHERE estado = 'Finalizado' 
               AND user_id = '" . $_SESSION['user_id'] . "'"; //trae todos los clientes activos
       $result = $conn->query($sql);
@@ -178,10 +178,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </thead>
         <tbody>
           <?php foreach ($kardex as $row): ?>
-            <tr id="fila-<?php echo $row['producto']; ?>">
+              <tr id="fila-<?php echo $row['nombre_producto']; ?>">
               <td><?php echo htmlspecialchars($row['categoria']); ?></td>
-              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['fecha_inscripcion']))); ?></td>
-              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['ultima_fecha_ingreso']))); ?></td>
+              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['fecha']))); ?></td>
+              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['ultima_fecha_de_ingreso']))); ?></td>
               <td><?php //echo htmlspecialchars($row['']); 
                   ?></td>
             </tr>

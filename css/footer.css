@@ -1,0 +1,26 @@
+/* footer.css */
+
+footer {
+    background-color: #007bff;  /* Color de fondo azul */
+    color: white;               /* Color del texto */
+    text-align: center;         /* Centra el contenido */
+    padding: 1rem;              /* Espaciado en el interior */
+    position: relative;
+    width: 100%;                /* Hace que el footer ocupe todo el ancho */
+    bottom: 0;                  /* Asegura que el footer se quede al final si hay poco contenido */
+}
+
+html, body {
+    height: 100%;  /* Asegura que el body ocupe toda la altura de la pantalla */
+    margin: 0;     /* Elimina márgenes por defecto */
+}
+
+.container {
+    display: flex;
+    flex-direction: column; /* Organiza los elementos en una columna */
+    min-height: 100%;  /* Hace que el contenedor ocupe toda la altura disponible */
+}
+
+.main-content {
+    flex: 1;  /* Hace que el contenido principal ocupe el espacio restante */
+}

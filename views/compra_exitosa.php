@@ -11,7 +11,7 @@ if (!isset($_GET['idPedido'])) {
     echo "Pedido no especificado.";
     exit;
 }
-
+/** @var mysqli $conn */
 $idPedido = intval($_GET['idPedido']);
 
 // Consultar información del pedido
@@ -43,6 +43,7 @@ $resultDetalles = $stmtDetalles->get_result();
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <?php include('../comp/header.php'); ?>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compra Exitosa</title>
@@ -131,4 +132,5 @@ $resultDetalles = $stmtDetalles->get_result();
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+<?php include('../comp/footer.php'); ?>
 </html>

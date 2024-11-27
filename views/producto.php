@@ -5,6 +5,7 @@ session_start();
 // Verificar que el usuario ha iniciado sesión
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
+    
     exit;
 }
 
@@ -21,7 +22,7 @@ if (isset($_GET['id'])) {
     $producto = $result->fetch_assoc();
 
     if (!$producto) {
-        echo "<h2>Curso no encontrado</h2>";
+        echo "<h2>Producto no encontrado</h2>";
         exit;
     }
 
@@ -93,7 +94,7 @@ $vendedor = $resultVendedor->fetch_assoc();
     $compra = $resultCompra->fetch_assoc();
 
 } else {
-    echo "<div class='alert alert-danger'>No se ha especificado un curso.</div>";
+    echo "<div class='alert alert-danger'>No se ha especificado un producto.</div>";
     exit;
 }
 
@@ -142,7 +143,7 @@ $resultListas = $stmtListas->get_result();
                     </form>
                 <?php else: ?>
                     <div class="alert alert-warning">
-                        Solo los usuarios que han comprado este curso pueden valorarlo.
+                        Solo los usuarios que han comprado este producto pueden valorarlo.
                     </div>
                 <?php endif; ?>
             </div>
@@ -170,14 +171,30 @@ $resultListas = $stmtListas->get_result();
             </div>
 
             <div class="mt-4">
-                <h3>Descripción del Curso</h3>
+                <h3>Descripción del Producto</h3>
                 <p class="product-description"><?php echo htmlspecialchars($producto['descripcion']); ?></p>
+            </div>
+            <!-- Niveles del Curso -->
+            <div class="mt-4">
+                <h3>Niveles del Curso</h3>
+                <?php if (!empty($niveles)): ?>
+                    <ul class="list-group">
+                        <?php foreach ($niveles as $nivel): ?>
+                            <li class="list-group-item">
+                                <h5><?php echo htmlspecialchars($nivel['nombre']); ?></h5>
+                                <p><?php echo htmlspecialchars($nivel['descripcion']); ?></p>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No hay niveles disponibles para este curso.</p>
+                <?php endif; ?>
             </div>
 
             <!-- Video del Producto -->
             <?php if ($video): ?>
                 <div class="mt-4">
-                    <h3>Video del Curso</h3>
+                    <h3>Video del Producto</h3>
                     <video width="320" height="240" controls>
                         <source src="data:video/mp4;base64,<?php echo base64_encode($video); ?>" type="video/mp4">
                         Tu navegador no soporta el elemento de video.
@@ -189,60 +206,60 @@ $resultListas = $stmtListas->get_result();
 <div class="mt-4">
     <?php include('../views/comentarios.php'); ?>
 </div>
-
+    <?php if ($compra['comprado'] <= 0): ?>
         </div>
-
-        <!-- Columna Derecha: Precio y Botón de Comprar -->
-        <div class="col-md-4 text-center">
-            <div class="price-container">
-            <?php if ($esCotizacion): ?>
-                    <!-- Botón para cotizar -->
-                    <form action="iniciar_chat.php" method="POST">
+            <!-- Columna Derecha: Precio y Botón de Comprar -->
+            <div class="col-md-4 text-center">
+                <div class="price-container">
+                    <?php if ($esCotizacion): ?>
+                        <!-- Botón para cotizar -->
+                        <form action="iniciar_chat.php" method="POST">
+                            <input type="hidden" name="idProducto" value="<?php echo $productoId; ?>">
+                            <input type="hidden" name="idVendedor" value="<?php echo $producto['id_vendedor']; ?>">
+                            <button type="submit" class="btn btn-primary btn-lg mt-3">Cotizar</button>
+                        </form>
+                    <?php else: ?>
+                                <h2 class="price">$<?php echo number_format($producto['precio'], 2); ?></h2>
+                    
+                    <!-- Formulario para agregar al carrito -->
+                    <form action="../views/agregar_carrito.php" method="POST">
                         <input type="hidden" name="idProducto" value="<?php echo $productoId; ?>">
-                        <input type="hidden" name="idVendedor" value="<?php echo $producto['id_vendedor']; ?>">
-                        <button type="submit" class="btn btn-primary btn-lg mt-3">Cotizar</button>
-                    </form>
-                <?php else: ?>
-                            <h2 class="price">$<?php echo number_format($producto['precio'], 2); ?></h2>
-                
-                <!-- Formulario para agregar al carrito -->
-                <form action="../views/agregar_carrito.php" method="POST">
-                    <input type="hidden" name="idProducto" value="<?php echo $productoId; ?>">
-                    <input type="hidden" name="nombreProducto" value="<?php echo htmlspecialchars($producto['nombre_producto']); ?>">
-                    <input type="hidden" name="precio" value="<?php echo $producto['precio']; ?>">
-                    <div class="form-group">
-                        <label for="cantidad">Cantidad:</label>
-                        <input type="number" name="cantidad" min="1" max="<?php echo htmlspecialchars($producto['cantidad_disponible']); ?>" value="1" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg mt-3">Añadir al Carrito</button>
-                </form>
-                        <?php endif; ?>
-
-                
-
-                <!-- Formulario para agregar a la lista de deseos -->
-                <div class="mt-4">
-                    <h4>Añadir a la Lista de Deseos</h4>
-                    <form action="agregar_a_lista.php" method="POST">
+                        <input type="hidden" name="nombreProducto" value="<?php echo htmlspecialchars($producto['nombre_producto']); ?>">
+                        <input type="hidden" name="precio" value="<?php echo $producto['precio']; ?>">
                         <div class="form-group">
-                            <label for="idLista">Selecciona una lista de deseos</label>
-                            <select name="idLista" id="idLista" class="form-control" required>
-                                <?php while ($lista = $resultListas->fetch_assoc()): ?>
-                                    <option value="<?php echo $lista['idLista']; ?>"><?php echo htmlspecialchars($lista['nombre_lista']); ?></option>
-                                <?php endwhile; ?>
-                            </select>
+                            <label for="cantidad">Cantidad:</label>
+                            <input type="number" name="cantidad" min="1" max="<?php echo htmlspecialchars($producto['cantidad_disponible']); ?>" value="1" class="form-control" required>
                         </div>
-                        <input type="hidden" name="idProducto" value="<?php echo $productoId; ?>">
-                        <button type="submit" class="btn btn-warning mt-3">Añadir a la Lista</button>
+                        <button type="submit" class="btn btn-primary btn-lg mt-3">Añadir al Carrito</button>
                     </form>
+                            <?php endif; ?>
+
+                    
+
+                    <!-- Formulario para agregar a la lista de deseos -->
+                    <div class="mt-4">
+                        <h4>Añadir a la Lista de Deseos</h4>
+                        <form action="agregar_a_lista.php" method="POST">
+                            <div class="form-group">
+                                <label for="idLista">Selecciona una lista de deseos</label>
+                                <select name="idLista" id="idLista" class="form-control" required>
+                                    <?php while ($lista = $resultListas->fetch_assoc()): ?>
+                                        <option value="<?php echo $lista['idLista']; ?>"><?php echo htmlspecialchars($lista['nombre_lista']); ?></option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+                            <input type="hidden" name="idProducto" value="<?php echo $productoId; ?>">
+                            <button type="submit" class="btn btn-warning mt-3">Añadir a la Lista</button>
+                        </form>
+                    </div>
+                    
+                    <p class="product-quantity">
+                        Productos en existencia: <?php echo htmlspecialchars($producto['cantidad_disponible']); ?>
+                    </p>
                 </div>
-                
-                <p class="product-quantity">
-                    Productos en existencia: <?php echo htmlspecialchars($producto['cantidad_disponible']); ?>
-                </p>
             </div>
         </div>
-    </div>
+    <?php endif; ?>
 </div>
 
 <script>
