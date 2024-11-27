@@ -83,10 +83,9 @@ if (isset($_GET['id'])) {
     // Verificar si el usuario ha comprado el producto
     $user_id = $_SESSION['user_id'];
     $sqlCompra = "
-        SELECT COUNT(*) AS comprado
-        FROM ventas v
-        INNER JOIN pedidos p ON v.idPedido = p.idPedido
-        WHERE p.idCliente = ? AND v.idProducto = ?";
+        SELECT comprado 
+        FROM vista_compras_cliente_producto 
+        WHERE idCliente = 1 AND idProducto = 5;";
     $stmtCompra = $conn->prepare($sqlCompra);
     $stmtCompra->bind_param("ii", $user_id, $productoId);
     $stmtCompra->execute();
