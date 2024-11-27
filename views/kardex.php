@@ -76,15 +76,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         <?php
 
-          $sql = "SELECT * 
+        $sql = "SELECT * 
             FROM vista_categoria"; //categorias de los cursos
-          $result = $conn->query($sql);
+        $result = $conn->query($sql);
 
-          if ($result && $result->num_rows > 0) {
-            $categorias = $result->fetch_all(MYSQLI_ASSOC);
-          } else {
-            $categorias = []; // No hay datos
-          }
+        if ($result && $result->num_rows > 0) {
+          $categorias = $result->fetch_all(MYSQLI_ASSOC);
+        } else {
+          $categorias = []; // No hay datos
+        }
 
         ?>
 
@@ -135,9 +135,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($estado_curso === 'Activo') {
       $sql = "SELECT * 
-          FROM vista_ventas_completa
-          WHERE estado = 'Activo'
-          AND user_id = '" . $_SESSION['user_id'] . "'"; //cursos del usuario 
+            FROM vista_ventas_completa
+            WHERE estado = 'Activo'
+            AND user_id = '" . $_SESSION['user_id'] . "'"; //cursos del usuario 
       $result = $conn->query($sql);
 
       if ($result && $result->num_rows > 0) {
@@ -149,9 +149,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($estado_curso === 'Finalizado') {
       $sql = "SELECT *
-              FROM vista_ventas_completa 
-              WHERE estado = 'Finalizado' 
-              AND user_id = '" . $_SESSION['user_id'] . "'"; //trae todos los clientes activos
+            FROM vista_ventas_completa 
+            WHERE estado = 'Finalizado' 
+            AND user_id = '" . $_SESSION['user_id'] . "'"; //trae todos los clientes activos
       $result = $conn->query($sql);
 
       if ($result && $result->num_rows > 0) {
@@ -161,8 +161,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       }
     }
     ?>
-
-
 
     <?php if ($estado_curso === 'Activo'): ?>
       <h2>Cursos Activos</h2>
@@ -178,19 +176,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </thead>
         <tbody>
           <?php foreach ($kardex as $row): ?>
-              <tr id="fila-<?php echo $row['nombre_producto']; ?>">
+            <tr id="fila-<?php echo htmlspecialchars($row['nombre_producto']); ?>">
+              <td><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
               <td><?php echo htmlspecialchars($row['categoria']); ?></td>
               <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['fecha']))); ?></td>
               <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['ultima_fecha_de_ingreso']))); ?></td>
-              <td><?php //echo htmlspecialchars($row['']); 
-                  ?></td>
+              <td><?php //echo htmlspecialchars($row['progreso']); ?></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
       </table>
     <?php endif; ?>
-
-
+    
     <?php if ($estado_curso === 'Finalizado'): ?>
       <h2>Cursos Finalizados</h2>
       <table id="tabla-activos" class="table table-bordered">
@@ -201,27 +198,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <th>Fecha de Inscripcion</th>
             <th>Última Fecha de Ingreso</th>
             <th>Progreso</th>
-            <th>Estado</th>
             <th>Certificado</th>
           </tr>
         </thead>
         <tbody>
           <?php foreach ($finalizados as $row): ?>
-            <tr id="fila-<?php echo $row['producto']; ?>">
+            <tr id="fila-<?php echo htmlspecialchars($row['nombre_producto']); ?>">
+              <td><?php echo htmlspecialchars($row['nombre_producto']); ?></td>
               <td><?php echo htmlspecialchars($row['categoria']); ?></td>
-              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['fecha_inscripcion']))); ?></td>
-              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['ultima_fecha_ingreso']))); ?></td>
-              <td><?php //echo htmlspecialchars($row['']); 
-                  ?></td>
+              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['fecha']))); ?></td>
+              <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['ultima_fecha_de_ingreso']))); ?></td>
+              <td><?php //echo htmlspecialchars($row['progreso']); ?></td>
               <td>
-                <button class="btn btn-danger btn-sm" onclick="eliminarUsuario(<?php echo $row['idUser']; ?>)">Eliminar</button>
+                <button class="btn btn-danger btn-sm" onclick="descargarFile(<?php echo $row['idUser']; ?>)">Descargar</button>
               </td>
             </tr>
           <?php endforeach; ?>
         </tbody>
       </table>
     <?php endif; ?>
-
 
 
   </div>
