@@ -8,7 +8,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = $_POST['password'];
 
     // Preparar consulta SQL
-    $stmt = mysqli_prepare($conn, "SELECT idUser, username, email, avatar, role FROM usuarios WHERE email = ? AND password = ?");
+    $stmt = mysqli_prepare($conn, "SELECT idUser, username, email, avatar, status, role FROM usuarios WHERE email = ? AND password = ?");
     mysqli_stmt_bind_param($stmt, "ss", $email, $password); // 'ss' indica que ambos parámetros son strings
 
     // Ejecutar la consulta
@@ -23,7 +23,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if ($user['status'] == 0) {
             echo "<script>alert('Usuario deshabilitado! Favor de contactar un administrador'); window.location.href = 'login.php';</script>";
-        } else {
+        } 
+        else {
             // Guardar información del usuario en la sesión
             $_SESSION['user_id'] = $user['idUser'];
             $_SESSION['username'] = $user['username'];
@@ -40,7 +41,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: ../views/menu.php");
             exit();
         }
-    } else {
+    } 
+    else {
         // Si las credenciales no son válidas
         echo "<script>alert('Correo o contraseña incorrectos'); window.location.href = 'login.php';</script>";
     }

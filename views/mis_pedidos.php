@@ -1,7 +1,7 @@
 <?php
 include('../views/database.php');
 session_start();
-
+/** @var mysqli $conn */
 $user_id = $_SESSION['user_id'];
 
 // Consultar los pedidos del cliente
@@ -46,7 +46,7 @@ $pedidos = $stmt->get_result();
     <?php include('../comp/header.php'); ?>
 
     <div class="content container mt-4">
-        <h1 class="mb-4">Mis Pedidos</h1>
+        <h1 class="mb-4">Mis Cursos</h1>
 
         <?php if ($pedidos->num_rows > 0): ?>
             <div class="accordion" id="accordionPedidos">
