@@ -59,28 +59,28 @@ if (isset($_GET['id'])) {
     }
 
     // Revisar si el producto es de tipo "cotización"
-$esCotizacion = $producto['tipo_venta'] === 'cotizar';
+    $esCotizacion = $producto['tipo_venta'] === 'cotizar';
 
 
-// Obtener el vendedor del producto
-$sqlVendedor = "SELECT idUser FROM usuarios WHERE idUser = ?";
-$stmtVendedor = $conn->prepare($sqlVendedor);
-$stmtVendedor->bind_param("i", $producto['id_vendedor']);
-$stmtVendedor->execute();
-$resultVendedor = $stmtVendedor->get_result();
-$vendedor = $resultVendedor->fetch_assoc();
+    // Obtener el vendedor del producto
+    $sqlVendedor = "SELECT idUser FROM usuarios WHERE idUser = ?";
+    $stmtVendedor = $conn->prepare($sqlVendedor);
+    $stmtVendedor->bind_param("i", $producto['id_vendedor']);
+    $stmtVendedor->execute();
+    $resultVendedor = $stmtVendedor->get_result();
+    $vendedor = $resultVendedor->fetch_assoc();
 
-        // Calcular el promedio de valoraciones
-        $sqlPromedio = "SELECT AVG(valoracion) AS promedio, COUNT(valoracion) AS total FROM valoraciones WHERE idProducto = ?";
-        $stmtPromedio = $conn->prepare($sqlPromedio);
-        $stmtPromedio->bind_param("i", $productoId);
-        $stmtPromedio->execute();
-        $resultPromedio = $stmtPromedio->get_result();
-        $promedio = $resultPromedio->fetch_assoc();
-        $promedioEstrellas = $promedio['promedio'] ? round($promedio['promedio'], 1) : 0;
-        $totalValoraciones = $promedio['total'];
+    // Calcular el promedio de valoraciones
+    $sqlPromedio = "SELECT AVG(valoracion) AS promedio, COUNT(valoracion) AS total FROM valoraciones WHERE idProducto = ?";
+    $stmtPromedio = $conn->prepare($sqlPromedio);
+    $stmtPromedio->bind_param("i", $productoId);
+    $stmtPromedio->execute();
+    $resultPromedio = $stmtPromedio->get_result();
+    $promedio = $resultPromedio->fetch_assoc();
+    $promedioEstrellas = $promedio['promedio'] ? round($promedio['promedio'], 1) : 0;
+    $totalValoraciones = $promedio['total'];
 
-         // Verificar si el usuario ha comprado el producto
+    // Verificar si el usuario ha comprado el producto
     $user_id = $_SESSION['user_id'];
     $sqlCompra = "
         SELECT COUNT(*) AS comprado
@@ -93,18 +93,30 @@ $vendedor = $resultVendedor->fetch_assoc();
     $resultCompra = $stmtCompra->get_result();
     $compra = $resultCompra->fetch_assoc();
 
-} else {
-    echo "<div class='alert alert-danger'>No se ha especificado un producto.</div>";
-    exit;
-}
+    // Consultar niveles del curso
+    $sqlNiveles = "SELECT nombre, descripcion FROM niveles WHERE id_producto = ? AND status = 0";
+    $stmtNiveles = $conn->prepare($sqlNiveles);
+    $stmtNiveles->bind_param("i", $productoId);
+    $stmtNiveles->execute();
+    $resultNiveles = $stmtNiveles->get_result();
+    
+    $niveles = [];
+    while ($row = $resultNiveles->fetch_assoc()) {
+        $niveles[] = $row;
+    }
 
-// Obtener las listas de deseos del usuario
-$user_id = $_SESSION['user_id'];
-$sqlListas = "SELECT * FROM listas_deseos WHERE idUsuario = ?";
-$stmtListas = $conn->prepare($sqlListas);
-$stmtListas->bind_param("i", $user_id);
-$stmtListas->execute();
-$resultListas = $stmtListas->get_result();
+    } else {
+        echo "<div class='alert alert-danger'>No se ha especificado un producto.</div>";
+        exit;
+    }
+
+    // Obtener las listas de deseos del usuario
+    $user_id = $_SESSION['user_id'];
+    $sqlListas = "SELECT * FROM listas_deseos WHERE idUsuario = ?";
+    $stmtListas = $conn->prepare($sqlListas);
+    $stmtListas->bind_param("i", $user_id);
+    $stmtListas->execute();
+    $resultListas = $stmtListas->get_result();
 ?>
 
 <!DOCTYPE html>
