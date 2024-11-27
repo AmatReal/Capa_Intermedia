@@ -1,18 +1,19 @@
 <?php
 require 'database.php'; // Conexión a la base de datos
 session_start();
+/** @var mysqli $conn */
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Obtener datos del formulario
     $email = $_POST['email'];
     $password = $_POST['password'];
-    
+
     // Preparar consulta SQL
     $stmt = mysqli_prepare($conn, "SELECT idUser, username, email, avatar, role FROM usuarios WHERE email = ? AND password = ?");
     mysqli_stmt_bind_param($stmt, "ss", $email, $password); // 'ss' indica que ambos parámetros son strings
-    
+
     // Ejecutar la consulta
     mysqli_stmt_execute($stmt);
-    
+
     // Obtener resultados
     $result = mysqli_stmt_get_result($stmt);
 
@@ -20,21 +21,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (mysqli_num_rows($result) == 1) {
         $user = mysqli_fetch_assoc($result);
 
-        // Guardar información del usuario en la sesión
-        $_SESSION['user_id'] = $user['idUser'];
-        $_SESSION['username'] = $user['username'];
-        $_SESSION['email'] = $user['email'];
-        $_SESSION['avatar'] = $user['avatar'];
-        $_SESSION['role'] = $user['role']; 
-        if ($user['role'] == 'vendedor') {
-            $_SESSION['es_vendedor'] = true;
+        if ($user['status'] == 0) {
+            echo "<script>alert('Usuario deshabilitado! Favor de contactar un administrador'); window.location.href = 'login.php';</script>";
         } else {
-            $_SESSION['es_vendedor'] = false;
-        }
+            // Guardar información del usuario en la sesión
+            $_SESSION['user_id'] = $user['idUser'];
+            $_SESSION['username'] = $user['username'];
+            $_SESSION['email'] = $user['email'];
+            $_SESSION['avatar'] = $user['avatar'];
+            $_SESSION['role'] = $user['role'];
+            if ($user['role'] == 'vendedor') {
+                $_SESSION['es_vendedor'] = true;
+            } else {
+                $_SESSION['es_vendedor'] = false;
+            }
 
-        // Redirigir al menú principal
-        header("Location: ../views/menu.php");
-        exit();
+            // Redirigir al menú principal
+            header("Location: ../views/menu.php");
+            exit();
+        }
     } else {
         // Si las credenciales no son válidas
         echo "<script>alert('Correo o contraseña incorrectos'); window.location.href = 'login.php';</script>";
@@ -47,6 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,6 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
@@ -82,4 +89,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     </div>
     <?php include('../comp/footer.php'); ?>
 </body>
+
 </html>

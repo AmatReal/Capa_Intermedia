@@ -96,8 +96,11 @@ if (!$err) {
                    <li class="nav-item">
                        <a class="nav-link" href="../views/solicitudes.php">Solicitudes</a>
                    </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="../views/reporte_usuarios.php">Reporte Usuarios</a>
+                   </li>
                 <?php endif; ?>
-                <?php if ($_SESSION['role'] == 'instructor'): ?>
+                <?php if ($_SESSION['role'] == 'vendedor'): ?>
                    <li class="nav-item">
                        <a class="nav-link" href="../views/crearproducto.php">Crear Curso</a>
                    </li>
@@ -105,7 +108,7 @@ if (!$err) {
                        <a class="nav-link" href="../views/consulta_ventas.php">Ventas</a>
                    </li>
                 <?php endif; ?>
-                <?php if ($_SESSION['role'] == 'alumno'): ?>
+                <?php if ($_SESSION['role'] == 'cliente'): ?>
                    <li class="nav-item">
                        <a class="nav-link" href="../views/carrito.php">Carrito</a>
                    </li>
