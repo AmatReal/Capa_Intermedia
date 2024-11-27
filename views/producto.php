@@ -94,12 +94,12 @@ if (isset($_GET['id'])) {
     $compra = $resultCompra->fetch_assoc();
 
     // Consultar niveles del curso
-    $sqlNiveles = "SELECT nombre, descripcion FROM niveles WHERE id_producto = ? AND status = 0";
+    $sqlNiveles = "SELECT id_nivel, nombre, descripcion FROM niveles WHERE id_producto = ? AND status = 1";
     $stmtNiveles = $conn->prepare($sqlNiveles);
     $stmtNiveles->bind_param("i", $productoId);
     $stmtNiveles->execute();
     $resultNiveles = $stmtNiveles->get_result();
-    
+
     $niveles = [];
     while ($row = $resultNiveles->fetch_assoc()) {
         $niveles[] = $row;
@@ -137,10 +137,32 @@ if (isset($_GET['id'])) {
         <div class="col-md-8">
             <h1 class="product-name"><?php echo htmlspecialchars($producto['nombre_producto']); ?></h1>
             <p class="rating">Calificación promedio: <?php echo $promedioEstrellas; ?> ⭐ (<?php echo $totalValoraciones; ?> valoraciones)</p>
-                        <!-- Formulario para valorar el producto -->
-                        <div class="mt-4">
+                <!-- Formulario para valorar el producto -->
+                <div class="mt-4">
                 <h3>Valorar el Producto</h3>
                 <?php if ($compra['comprado'] > 0): ?>
+                    <?php if (!empty($niveles)): ?>
+                        <div class="col-md-12 mt-4">
+                            <h3>Selecciona un Nivel</h3>
+                            <div class="list-group">
+                                <?php foreach ($niveles as $nivel): ?>
+                                    <button 
+                                        class="list-group-item list-group-item-action nivel-btn" 
+                                        data-id="<?php echo $nivel['id_nivel']; ?>">
+                                        <?php echo htmlspecialchars($nivel['nombre']); ?>
+                                    </button>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <!-- Contenedor donde se actualizarán los detalles del nivel -->
+                        <div id="nivel-detalles" class="mt-4">
+                            <h3>Detalles del Nivel</h3>
+                            <p>Selecciona un nivel para ver sus detalles.</p>
+                        </div>
+                    <?php else: ?>
+                        <p>No hay niveles disponibles para este curso.</p>
+                    <?php endif; ?>
+
                     <form action="../views/procesar_valoracion.php" method="POST">
                         <label for="valoracion">Selecciona tu valoración:</label>
                         <select name="valoracion" id="valoracion" class="form-control" required>
@@ -280,6 +302,39 @@ if (isset($_GET['id'])) {
         document.getElementById('mainImage').src = element.src;
     }
 </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Agregar evento click a los botones de nivel
+        document.querySelectorAll('.nivel-btn').forEach(function (button) {
+            button.addEventListener('click', function () {
+                const nivelId = this.getAttribute('data-id');
+                
+                // Realizar la solicitud AJAX
+                fetch(`nivel_detalles.php?id=${nivelId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        const contenedor = document.getElementById('nivel-detalles');
+                        if (data.success) {
+                            contenedor.innerHTML = `
+                                <h3>${data.nombre}</h3>
+                                <p>${data.descripcion}</p>
+                                <video controls src="data:video/mp4;base64,${data.video}" class="mt-3" style="width: 100%;"></video>
+                                <a href="data:application/pdf;base64,${data.archivo}" class="btn btn-primary mt-3" download="Nivel-${data.nombre}.pdf">Descargar PDF</a>
+                            `;
+                        } else {
+                            contenedor.innerHTML = `<p>Error al cargar los detalles del nivel.</p>`;
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        document.getElementById('nivel-detalles').innerHTML = `<p>Ocurrió un error al cargar el nivel.</p>`;
+                    });
+            });
+        });
+    });
+</script>
+
 
 <?php include('../comp/footer.php'); ?>
 </body>
