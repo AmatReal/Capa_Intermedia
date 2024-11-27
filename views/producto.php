@@ -9,6 +9,7 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
+
 // Obtener el ID del producto desde la URL
 if (isset($_GET['id'])) {
     $productoId = intval($_GET['id']);  // Convertir a entero por seguridad
