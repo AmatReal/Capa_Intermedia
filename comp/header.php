@@ -115,6 +115,9 @@ if (!$err) {
                    <li class="nav-item">
                        <a class="nav-link" href="../views/mis_pedidos.php">Pedidos</a>
                    </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="../views/kardex.php">Kardex</a>
+                   </li>
                 <?php endif; ?>
                 <!-- Enlace dinámico para los chats -->
                 <li class="nav-item">
