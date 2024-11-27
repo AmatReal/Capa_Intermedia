@@ -1,7 +1,7 @@
 <?php 
 include('../views/database.php');
 session_start();
-
+/** @var mysqli $conn */
 // Verificar que el usuario ha iniciado sesión
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
@@ -21,7 +21,7 @@ if (isset($_GET['id'])) {
     $producto = $result->fetch_assoc();
 
     if (!$producto) {
-        echo "<h2>Producto no encontrado</h2>";
+        echo "<h2>Curso no encontrado</h2>";
         exit;
     }
 
@@ -93,7 +93,7 @@ $vendedor = $resultVendedor->fetch_assoc();
     $compra = $resultCompra->fetch_assoc();
 
 } else {
-    echo "<div class='alert alert-danger'>No se ha especificado un producto.</div>";
+    echo "<div class='alert alert-danger'>No se ha especificado un curso.</div>";
     exit;
 }
 
@@ -142,7 +142,7 @@ $resultListas = $stmtListas->get_result();
                     </form>
                 <?php else: ?>
                     <div class="alert alert-warning">
-                        Solo los usuarios que han comprado este producto pueden valorarlo.
+                        Solo los usuarios que han comprado este curso pueden valorarlo.
                     </div>
                 <?php endif; ?>
             </div>
@@ -170,14 +170,14 @@ $resultListas = $stmtListas->get_result();
             </div>
 
             <div class="mt-4">
-                <h3>Descripción del Producto</h3>
+                <h3>Descripción del Curso</h3>
                 <p class="product-description"><?php echo htmlspecialchars($producto['descripcion']); ?></p>
             </div>
 
             <!-- Video del Producto -->
             <?php if ($video): ?>
                 <div class="mt-4">
-                    <h3>Video del Producto</h3>
+                    <h3>Video del Curso</h3>
                     <video width="320" height="240" controls>
                         <source src="data:video/mp4;base64,<?php echo base64_encode($video); ?>" type="video/mp4">
                         Tu navegador no soporta el elemento de video.

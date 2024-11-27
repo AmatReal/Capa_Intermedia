@@ -1,7 +1,7 @@
 <?php
 include('../views/database.php');
 session_start();
-
+/** @var mysqli $conn */
 // Verificar que el usuario ha iniciado sesión
 if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
