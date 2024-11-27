@@ -1,17 +1,16 @@
 <?php
 include('../views/database.php');
 session_start();
-
+/** @var mysqli $conn */
 $user_id = $_SESSION['user_id'];
 $productoId = intval($_POST['idProducto']); // ID del producto enviado desde el formulario
 $valoracion = intval($_POST['valoracion']); // Valoración (1 a 5)
 
 // Verificar si el usuario ha comprado el producto
 $sqlCompra = "
-    SELECT COUNT(*) AS comprado
-    FROM ventas v
-    INNER JOIN pedidos p ON v.idPedido = p.idPedido
-    WHERE p.idCliente = ? AND v.idProducto = ?";
+    SELECT total_comprado 
+    FROM vista_compras_cliente_producto 
+    WHERE idCliente = ? AND idProducto = ?;";
 $stmtCompra = $conn->prepare($sqlCompra);
 $stmtCompra->bind_param("ii", $user_id, $productoId);
 $stmtCompra->execute();
