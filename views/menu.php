@@ -44,23 +44,12 @@ if ($avatarId) {
 
 // Obtener los productos más vendidos basados en la tabla de ventas
 $sqlMasVendidos = "
-    SELECT p.idProducto, p.nombre_producto, p.precio, 
-           (SELECT archivo FROM multimedia WHERE id_producto = p.idProducto AND tipo = 'imagen' LIMIT 1) AS imagen,
-           SUM(v.cantidad) AS total_vendidos
-    FROM productos p
-    INNER JOIN ventas v ON p.idProducto = v.idProducto
-    GROUP BY p.idProducto
-    ORDER BY total_vendidos DESC
-    LIMIT 8";
+    SELECT * FROM vista_mas_vendidos;";
 $resultMasVendidos = $conn->query($sqlMasVendidos);
 
 // Obtener los productos más nuevos basados en `idProducto` (asume que IDs más altos son más recientes)
 $sqlMasNuevos = "
-    SELECT p.idProducto, p.nombre_producto, p.precio, 
-           (SELECT archivo FROM multimedia WHERE id_producto = p.idProducto AND tipo = 'imagen' LIMIT 1) AS imagen
-    FROM productos p
-    ORDER BY p.idProducto DESC
-    LIMIT 8";
+    SELECT * FROM vista_mas_nuevos;";
 $resultMasNuevos = $conn->query($sqlMasNuevos);
 ?>
 
