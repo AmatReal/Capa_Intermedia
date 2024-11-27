@@ -1,0 +1,36 @@
+body {
+    background-color: white;
+    color: #000;
+}
+
+h4 {
+    color: #004080;
+}
+
+.btn-primary {
+    background-color: #004080;
+    border-color: #004080;
+}
+
+.btn-secondary {
+    background-color: #80bfff;
+    border-color: #80bfff;
+}
+
+.btn-danger {
+    background-color: #ff4d4d;
+    border-color: #ff4d4d;
+}
+
+.card {
+    border: 1px solid #004080;
+}
+
+.card-title {
+    color: #004080;
+}
+
+.form-control:focus {
+    border-color: #004080;
+    box-shadow: 0 0 0 0.2rem rgba(0, 64, 128, 0.25);
+}

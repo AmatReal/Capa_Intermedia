@@ -1,0 +1,46 @@
+body {
+    background-color: white;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+
+.image-container {
+    max-width: 100%;
+    margin-bottom: 20px;
+}
+
+.large-image {
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #0056b3;
+}
+
+
+.button-group {
+    display: flex;
+    justify-content: center;
+}
+
+
+.btn-success {
+    background-color: #289fa7;
+    border: none;
+}
+
+.btn-success:hover {
+    background-color: #0f6eeb;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border: none;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}

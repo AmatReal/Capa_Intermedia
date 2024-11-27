@@ -1,0 +1,29 @@
+
+
+h2 {
+    color: #004080;
+}
+
+.btn-primary {
+    background-color: #004080;
+    border-color: #004080;
+}
+
+.btn-primary:hover {
+    background-color: #0059b3;
+    border-color: #0059b3;
+}
+
+.form-control:focus {
+    border-color: #004080;
+    box-shadow: 0 0 0 0.2rem rgba(0, 64, 128, 0.25);
+}
+
+.btn-link {
+    color: #004080;
+}
+
+.btn-link:hover {
+    color: #0059b3;
+    text-decoration: underline;
+}

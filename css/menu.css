@@ -1,0 +1,32 @@
+
+.carousel {
+    position: relative;
+}
+
+
+.carousel-control-prev, .carousel-control-next {
+    width: 5%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    background-color: black; 
+    border-radius: 50%; 
+    width: 30px;
+    height: 30px;
+}
+
+
+.carousel-inner {
+    margin-left: 40px;
+    margin-right: 40px;
+    padding-bottom: 20px;
+}
+
+.card {
+    max-width: 200px;
+    margin: 0 auto;
+}
