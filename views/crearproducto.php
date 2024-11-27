@@ -122,6 +122,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mensaje = "Producto creado exitosamente.";
         $mensajeTipo = "success";
     }
+
+    // Después de guardar el producto, procesar los niveles
+    if (isset($_POST['nombreNivel']) && is_array($_POST['nombreNivel'])) {
+        $niveles = $_POST['nombreNivel'];
+        $descripciones = $_POST['descripcionNivel'];
+        $pdfs = $_FILES['pdfNivel'];
+        $videos = $_FILES['videoNivel'];
+
+        foreach ($niveles as $index => $nivel) {
+            $nombreNivel = $nivel;
+            $descripcionNivel = $descripciones[$index];
+
+            // Manejar el archivo PDF
+            $pdfData = null;
+            if (isset($pdfs['tmp_name'][$index]) && is_uploaded_file($pdfs['tmp_name'][$index])) {
+                $pdfData = file_get_contents($pdfs['tmp_name'][$index]);
+            }
+
+            // Manejar el archivo de video
+            $videoData = null;
+            if (isset($videos['tmp_name'][$index]) && is_uploaded_file($videos['tmp_name'][$index])) {
+                $videoData = file_get_contents($videos['tmp_name'][$index]);
+            }
+
+            // Insertar en la tabla de niveles
+            $sqlNivel = "INSERT INTO niveles (nombre, descripcion, archivo, video, id_producto) VALUES (?, ?, ?, ?, ?)";
+            $stmtNivel = $conn->prepare($sqlNivel);
+            $stmtNivel->bind_param("ssbbi", $nombreNivel, $descripcionNivel, $null, $null, $productoId);
+
+            // Subir los archivos si existen
+            if ($pdfData) {
+                $stmtNivel->send_long_data(2, $pdfData);
+            }
+            if ($videoData) {
+                $stmtNivel->send_long_data(3, $videoData);
+            }
+
+            $stmtNivel->execute();
+        }
+    }
+
 }
 ?>
 <!DOCTYPE html>
@@ -179,7 +220,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="form-group">
             <label for="tipoVenta">¿Es para vender o gratuito?</label>
             <select name="tipoVenta" class="form-control" id="tipoVenta" required>
-                <option value="vender">Vender</option>
+                <option value="
+                ">Vender</option>
                 <option value="cotizar">Gratis</option>
             </select>
         </div>
@@ -190,6 +232,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <div class="form-group">
             <label for="cantidadProducto">Cantidad Disponible</label>
             <input type="number" name="cantidadProducto" class="form-control" id="cantidadProducto" placeholder="Cantidad disponible" required>
+        </div>
+
+        <!-- Sección para agregar niveles -->
+        <div class="form-group">
+            <label for="nivelesProducto">Niveles del Curso</label>
+            <button type="button" id="addNivelButton" class="btn btn-secondary">Agregar Nivel</button>
+            <div id="nivelesProductoContainer"></div> <!-- Aquí se agregarán los niveles -->
         </div>
         <div class="text-right">
             <button type="submit" class="btn btn-primary">Crear Producto</button>
@@ -244,6 +293,38 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         xhr.send(`nuevaCategoria=${encodeURIComponent(nuevaCategoria)}`);
     });
+
+    document.getElementById('addNivelButton').addEventListener('click', function () {
+    // Crear un nuevo contenedor de nivel
+    const contenedorNiveles = document.getElementById('nivelesProductoContainer');
+    const nuevoNivel = document.createElement('div');
+    nuevoNivel.classList.add('nivel-container');
+
+    // Contenido del nivel
+    nuevoNivel.innerHTML = `
+        <hr>
+        <div class="form-group">
+            <label for="nombreNivel">Título del Nivel</label>
+            <input type="text" name="nombreNivel[]" class="form-control" placeholder="Título del nivel" required>
+        </div>
+        <div class="form-group">
+            <label for="descripcionNivel">Descripción</label>
+            <textarea name="descripcionNivel[]" class="form-control" rows="3" placeholder="Descripción del nivel" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="pdfNivel">Archivo PDF</label>
+            <input type="file" name="pdfNivel[]" class="form-control-file" accept="application/pdf">
+        </div>
+        <div class="form-group">
+            <label for="videoNivel">Video</label>
+            <input type="file" name="videoNivel[]" class="form-control-file" accept="video/*">
+        </div>
+    `;
+    
+    // Agregar el nuevo nivel al contenedor
+    contenedorNiveles.appendChild(nuevoNivel);
+});
+
 </script>
 
 <?php include('../comp/footer.php'); ?>
