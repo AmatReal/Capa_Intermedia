@@ -24,6 +24,7 @@ $sqlCarrito = "
     INNER JOIN productos p ON ch.idProducto = p.idProducto
     WHERE ch.idCliente = ? AND ch.estado = 'cerrado'
 ";
+/** @var mysqli $conn */
 
 $stmtCarrito = $conn->prepare($sqlCarrito);
 $stmtCarrito->bind_param("ii", $user_id, $user_id);

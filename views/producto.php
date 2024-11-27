@@ -86,7 +86,7 @@ if (isset($_GET['id'])) {
     $sqlCompra = "
         SELECT comprado 
         FROM vista_compras_cliente_producto 
-        WHERE idCliente = 1 AND idProducto = 5;";
+        WHERE idCliente = ? AND idProducto = ?;";
     $stmtCompra = $conn->prepare($sqlCompra);
     $stmtCompra->bind_param("ii", $user_id, $productoId);
     $stmtCompra->execute();
@@ -117,6 +117,19 @@ if (isset($_GET['id'])) {
     $stmtListas->bind_param("i", $user_id);
     $stmtListas->execute();
     $resultListas = $stmtListas->get_result();
+
+    // Consulta para verificar si el curso está finalizado
+    $sqlEstado = "SELECT estado FROM ventas WHERE idProducto = ? AND user_id = ?";
+    $stmtEstado = $conn->prepare($sqlEstado);
+    $stmtEstado->bind_param("ii", $productoId, $_SESSION['user_id']);
+    $stmtEstado->execute();
+    $resultEstado = $stmtEstado->get_result();
+    $estadoVenta = $resultEstado->fetch_assoc();
+
+    $cursoFinalizado = false;
+    if ($estadoVenta && $estadoVenta['estado'] == 'Finalizado') {
+        $cursoFinalizado = true; // El curso ya ha sido terminado
+    }
 ?>
 
 <!DOCTYPE html>
@@ -213,17 +226,33 @@ if (isset($_GET['id'])) {
                 <h3>Niveles del Curso</h3>
                 <?php if (!empty($niveles)): ?>
                     <ul class="list-group">
-                        <?php foreach ($niveles as $nivel): ?>
+                        <?php 
+                        $totalNiveles = count($niveles);
+                        foreach ($niveles as $index => $nivel): ?>
                             <li class="list-group-item">
                                 <h5><?php echo htmlspecialchars($nivel['nombre']); ?></h5>
                                 <p><?php echo htmlspecialchars($nivel['descripcion']); ?></p>
                             </li>
+                            
+                            <!-- Si es el último nivel, mostrar el botón "Terminar curso" -->
+                            <?php if ($index === $totalNiveles - 1): ?>
+                                <?php if ($compra['comprado'] > 0): ?>
+                                    <?php if ($cursoFinalizado): ?>
+                                        <!-- Si el curso está finalizado, mostramos el botón deshabilitado -->
+                                        <button id="terminar-curso-btn" class="btn btn-secondary" disabled>Curso terminado</button>
+                                    <?php else: ?>
+                                        <!-- Si el curso no está finalizado, mostramos el botón normal -->
+                                        <button id="terminar-curso-btn" class="btn btn-success" onclick="terminarCurso()">Terminar curso</button>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                            <?php endif; ?>
                         <?php endforeach; ?>
                     </ul>
                 <?php else: ?>
                     <p>No hay niveles disponibles para este curso.</p>
                 <?php endif; ?>
             </div>
+
 
             <!-- Video del Producto -->
             <?php if ($video): ?>
@@ -335,6 +364,58 @@ if (isset($_GET['id'])) {
     });
 </script>
 
+<script>
+    function terminarCurso() {
+        // Obtener el botón
+        var boton = document.getElementById("terminar-curso-btn");
+        
+        // Cambiar el texto del botón
+        boton.textContent = "Curso terminado";
+        
+        // Cambiar el estilo del botón (color gris y deshabilitarlo)
+        boton.classList.remove("btn-success");
+        boton.classList.add("btn-secondary");  // Cambiar a gris
+        boton.disabled = true;  // Deshabilitar el botón
+        
+        // Opcional: Puedes agregar una acción adicional aquí, como enviar el formulario o hacer algo en el backend
+    }
+</script>
+
+<script>
+    function terminarCurso() {
+        var boton = document.getElementById("terminar-curso-btn");
+        
+        // Cambiar el texto del botón
+        boton.textContent = "Curso terminado";
+        
+        // Cambiar el estilo del botón (color gris y deshabilitarlo)
+        boton.classList.remove("btn-success");
+        boton.classList.add("btn-secondary");  // Cambiar a gris
+        boton.disabled = true;  // Deshabilitar el botón
+
+        // Obtener el ID del producto y el ID del usuario (de la sesión)
+        var idProducto = <?php echo $productoId; ?>;
+        var userId = <?php echo $_SESSION['user_id']; ?>;
+
+        // Enviar los datos al servidor usando AJAX para actualizar el estado en la base de datos
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "actualizar_estado_venta.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        
+        // Enviar los datos en el formato adecuado para POST
+        xhr.send("idProducto=" + idProducto + "&userId=" + userId);
+        
+        // Manejar la respuesta del servidor (opcional)
+        xhr.onload = function() {
+            if (xhr.status == 200) {
+                console.log("Estado de la venta actualizado a 'Finalizado'.");
+                // Opcional: Puedes mostrar un mensaje al usuario o redirigir a otra página
+            } else {
+                console.log("Error al actualizar el estado.");
+            }
+        };
+    }
+</script>
 
 <?php include('../comp/footer.php'); ?>
 </body>

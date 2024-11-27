@@ -107,6 +107,9 @@ if (!$err) {
                    <li class="nav-item">
                        <a class="nav-link" href="../views/consulta_ventas.php">Ventas</a>
                    </li>
+                   <li class="nav-item">
+                       <a class="nav-link" href="../views/reporte_ventas.php">Reporte Ventas</a>
+                   </li>
                 <?php endif; ?>
                 <?php if ($_SESSION['role'] == 'cliente'): ?>
                    <li class="nav-item">

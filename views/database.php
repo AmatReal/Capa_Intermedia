@@ -12,11 +12,11 @@ $conn=mysqli_connect($db_server,$db_user,$db_password,$db_database);
 
 
 
-if($conn){
-    echo "si se pudo";
-}else{
-    echo "llama";
-}
+// if($conn){
+//     echo "si se pudo";
+// }else{
+//     echo "llama";
+// }
 
 
 ?>

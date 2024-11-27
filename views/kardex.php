@@ -210,7 +210,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
               <td><?php echo htmlspecialchars(date('d M Y', strtotime($row['ultima_fecha_de_ingreso']))); ?></td>
               <td><?php //echo htmlspecialchars($row['progreso']); ?></td>
               <td>
-                <button class="btn btn-danger btn-sm" onclick="descargarFile(<?php echo $row['idUser']; ?>)">Descargar</button>
+              <!-- <pre>
+              <?php print_r($finalizados); ?>
+              </pre> -->
+              <?php if (isset($row['user_id'])): ?>
+                  <a href="generar_certificado.php?user_id=<?php echo htmlspecialchars($row['user_id']); ?>" class="btn btn-danger btn-sm">Descargar</a>
+              <?php else: ?>
+                  <span class="text-muted">ID no disponible</span>
+              <?php endif; ?>
               </td>
             </tr>
           <?php endforeach; ?>
