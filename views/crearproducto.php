@@ -177,10 +177,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <small id="categoryFeedback" class="form-text"></small>
         </div>
         <div class="form-group">
-            <label for="tipoVenta">¿Es para cotizar o vender?</label>
+            <label for="tipoVenta">¿Es para vender o gratuito?</label>
             <select name="tipoVenta" class="form-control" id="tipoVenta" required>
-                <option value="cotizar">Cotizar</option>
                 <option value="vender">Vender</option>
+                <option value="cotizar">Gratis</option>
             </select>
         </div>
         <div class="form-group" id="precioSection" style="display:none;">
