@@ -59,7 +59,7 @@ $estadoChat = $chat['estado']; // Puede ser 'abierto' o 'cerrado'
             <?php while ($mensaje = $resultMensajes->fetch_assoc()): ?>
                 <div class="message mb-2">
                     <strong>
-                        <?php echo ($mensaje['remitente'] === 'vendedor') ? "Vendedor:" : "Cliente:"; ?>
+                        <?php echo ($mensaje['remitente'] === 'vendedor') ? "Maestro:" : "Alumno:"; ?>
                     </strong>
                     <p>
                         <?php if (strpos($mensaje['mensaje'], 'Propuesta:') === 0): ?>
@@ -74,47 +74,6 @@ $estadoChat = $chat['estado']; // Puede ser 'abierto' o 'cerrado'
         </div>
 
         <?php if ($estadoChat === 'abierto'): ?>
-            <?php if ($esVendedor): ?>
-                <!-- Formulario para enviar una propuesta -->
-                <form action="enviar_propuesta.php" method="POST" class="mt-3">
-                    <input type="hidden" name="idChat" value="<?php echo $idChat; ?>">
-                    <div class="form-group">
-                        <label for="cantidad">Cantidad propuesta:</label>
-                        <input type="number" name="cantidad" min="1" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="precio">Precio total:</label>
-                        <input type="number" step="0.01" name="precio" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-success">Enviar Propuesta</button>
-                </form>
-            <?php else: ?>
-                <!-- Opciones para aceptar o rechazar propuesta -->
-                <?php 
-                // Obtener la última propuesta del vendedor
-                $sqlUltimaPropuesta = "SELECT * FROM mensajes_chat WHERE idChat = ? AND remitente = 'vendedor' AND mensaje LIKE 'Propuesta:%' ORDER BY fecha DESC LIMIT 1";
-                $stmtUltimaPropuesta = $conn->prepare($sqlUltimaPropuesta);
-                $stmtUltimaPropuesta->bind_param("i", $idChat);
-                $stmtUltimaPropuesta->execute();
-                $ultimaPropuesta = $stmtUltimaPropuesta->get_result()->fetch_assoc();
-
-                if ($ultimaPropuesta): ?>
-                    <div class="mt-3">
-                        <h5>Última Propuesta:</h5>
-                        <p><?php echo htmlspecialchars($ultimaPropuesta['mensaje']); ?></p>
-                        <form action="procesar_propuesta.php" method="POST" class="d-inline-block">
-                            <input type="hidden" name="idChat" value="<?php echo $idChat; ?>">
-                            <input type="hidden" name="accion" value="aceptar">
-                            <button type="submit" class="btn btn-success">Aceptar</button>
-                        </form>
-                        <form action="procesar_propuesta.php" method="POST" class="d-inline-block">
-                            <input type="hidden" name="idChat" value="<?php echo $idChat; ?>">
-                            <input type="hidden" name="accion" value="rechazar">
-                            <button type="submit" class="btn btn-danger">Rechazar</button>
-                        </form>
-                    </div>
-                <?php endif; ?>
-            <?php endif; ?>
 
             <!-- Formulario para mensajes normales -->
             <form action="enviar_mensaje.php" method="POST" class="mt-3">
